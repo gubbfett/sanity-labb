@@ -1,0 +1,15 @@
+mixin renderLink(item)
+    if !item.hideInMenu
+        li
+            a(href=item.slug)= item.name
+                if item.children.length
+                    ul
+                        each child in item.children
+                            +renderLink(child)
+
+
+nav
+    ul
+        each item in menu
+            +renderLink(item)
+    

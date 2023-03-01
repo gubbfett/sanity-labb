@@ -1,0 +1,9 @@
+app:
+  port: 3000
+  site-title: "Linus fina sida"
+
+sanity:
+  project_id: "4637pdpk"
+  dataset: "production"
+  listen_query: "*[_type in ['page', 'redirect']]"
+  listen_delay_ms: 3000
