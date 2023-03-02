@@ -1,13 +1,13 @@
 # /backend
 
 ##### Info
-Have some schemas, where "redirect" and "page" are the ones that matters for now. The field for 'slug' should be changed from 'text' to 'slug'
+Have some schemas, where "redirect" and "page" are the ones that matters for now.
 
 ##### Initial / Install
 ```sh
 $ cd backend
 $ npm i
-$ sanity start
+$ npm run dev
 ```
 
 ##### Config

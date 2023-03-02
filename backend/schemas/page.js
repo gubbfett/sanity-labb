@@ -16,8 +16,16 @@ export default {
         },
         {
             name: 'slug',
-            type: 'string',
-            title: 'slug'
+            type: 'slug',
+            title: 'Slug',
+            options: {
+                source: 'name',
+                maxLength: 200, // will be ignored if slugify is set
+                slugify: input => input
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .slice(0, 200)
+              }
         },
         {
             name: 'menuorder',

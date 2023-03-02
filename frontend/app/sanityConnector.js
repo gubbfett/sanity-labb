@@ -15,43 +15,40 @@ module.exports = class SanityConnector{
     }
 
     async getPages(){
-        const pages = await this.client.fetch('*[_type == "page"] | order(menuorder asc) {name, slug, parent->{name, slug, "parent": parent->slug}, menuorder, content, description, image, category, hideInMenu}')
-        
+        const pages = await this.client.fetch('*[_type == "page"] | order(menuorder asc)')
+        //console.log(pages)
         pages.forEach(page => {
-            if(typeof(page.hideInMenu) == 'object'){
-                page.hideInMenu = false;
-            }
+            page.content = ""
+            
+            page.slug = page.slug == null || typeof(page.slug) == 'undefined' ? '/' : '/'+page.slug.current
+            page.children = []
         })
 
-        function createTree(data, parentSlug = null) {
-            const nodes = data.filter(node => {
-                if (parentSlug === null) {
-                    return node.parent === parentSlug;
-                } else {
-                    return node.parent && node.parent.slug === parentSlug;
-                }
+        function makeTree(data) {
+            const tree = [];
+            const mappedData = {};
+            
+            data.forEach(item => {
+              const id = item._id;
+              mappedData[id] = { ...item, children: [] };
             });
-    
-            const tree = nodes.map(node => {
-                const { parent, ...child } = node;
-                const children = createTree(data, node.slug);
-                if (children.length > 0) {
-                    child.children = children;
-                } else {
-                    child.children = []
-                }
-                if (parentSlug !== null) {
-                    const grandparentSlug = parent && parent.parent ? `${parent.parent}` : '';
-                    child.slug = `${grandparentSlug}${parentSlug}${child.slug}`;
-                }
-                return child;
+            
+            Object.keys(mappedData).forEach(id => {
+              const item = mappedData[id];
+              const parentId = item.parent?._ref;
+          
+              if (parentId) {
+                mappedData[parentId].children.push(item);
+                item.slug = mappedData[parentId].slug + item.slug;
+              } else {
+                tree.push(item);
+              }
             });
-    
+            
             return tree;
-        }
+          }
 
-        return createTree(pages);
-
+        return makeTree(pages);
     }
 
     async getRedirects(){
